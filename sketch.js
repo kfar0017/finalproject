@@ -1,29 +1,85 @@
 let circles = [];
+let hexagonRadius = 145;
 
 // Define size for easy modification
-let circleSize = 200;
+let circleSize = 220;
 
 function setup() {
   createCanvas(800, 800);
   noLoop();
 
   // Each circle object now has a 'pattern' property to determine which function should be used
-  circles.push({ cx: 100, cy: 100, size: circleSize, pattern: "smallCircles" });
-  circles.push({ cx: 300, cy: 100, size: circleSize, pattern: "defaultPattern" });
-  circles.push({ cx: 300, cy: 300, size: circleSize, pattern: "smallCircles" });
-  circles.push({ cx: 500, cy: 300, size: circleSize, pattern: "defaultPattern" });
-  circles.push({ cx: 500, cy: 500, size: circleSize, pattern: "smallCircles" });
-  circles.push({ cx: 100, cy: 500, size: circleSize, pattern: "defaultPattern" });
+  circles.push({ cx: 130, cy: 130, size: circleSize, pattern: "smallCircles" });
+  circles.push({ cx: 400, cy: 130, size: circleSize, pattern: "defaultPattern" });
+  circles.push({ cx: 400, cy: 400, size: circleSize, pattern: "smallCircles" });
+  circles.push({ cx: 670, cy: 400, size: circleSize, pattern: "defaultPattern" });
+  circles.push({ cx: 670, cy: 660, size: circleSize, pattern: "smallCircles" });
+  circles.push({ cx: 130, cy: 660, size: circleSize, pattern: "defaultPattern" });
 }
 
 function draw() {
   background(1, 76, 118);
+  
+  let cellSize = width / 3; // Determine the size of each cell in the grid
+
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      let offsetX = col * cellSize; // Horizontal offset for current cell
+      let offsetY = row * cellSize; // Vertical offset for current cell
+      let cx = offsetX + cellSize / 2;
+      let cy = offsetY + cellSize / 2;
+
+      // Draw hexagon pattern
+      drawHexagonPattern(cx, cy);
+
+    }
+  }
+
 
   for (let circle of circles) {
     if (circle.pattern === "smallCircles") {
       drawSmallCircles(circle.cx, circle.cy, circle.size);
     } else {
       drawCirclePattern(circle.cx, circle.cy, circle.size);
+    }
+  }
+}
+
+function drawHexagonPattern(cx, cy) {
+  // Draw the hexagon and the circles on its sides
+  let sides = 6;
+  let circlePerSide = 5;
+  let colors = ['blue', 'red', 'green', 'yellow'];
+
+  beginShape();
+  for (let i = 0; i < 6; i++) {
+    let angle = TWO_PI / 6 * i;
+    let x = cx + cos(angle) * hexagonRadius;
+    let y = cy + sin(angle) * hexagonRadius;
+    noFill()
+    vertex(x, y);
+  }
+  endShape(CLOSE);
+
+  for (let i = 0; i < sides; i++) {
+    let angle = TWO_PI / sides * i;
+    let x = cx + cos(angle) * hexagonRadius;
+    let y = cy + sin(angle) * hexagonRadius;
+    for (let j = 0; j < circlePerSide; j++) {
+      let angle2 = (TWO_PI / sides * (i+1));
+      let x2 = (cx + cos(angle2) * hexagonRadius);
+      let y2 = (cy + sin(angle2) * hexagonRadius);
+      let vx = (x2 - x) * (j/circlePerSide);
+      let vy = (y2 - y) * (j/circlePerSide);
+      stroke(205, 91, 28);
+      strokeWeight(5);
+      fill(1, 76, 118)
+      push();
+      translate(x + vx + 3, y + vy - 3);
+      rotate(angle);
+      fill(colors[j % colors.length]);
+      ellipse(0, 0, 12, 20);
+      pop();
     }
   }
 }
@@ -112,7 +168,7 @@ function circlePoints(center, diameter) {
   let radius = diameter / 2;
   let x, y, angle;
   let s = random(0, 45);
-  for (let i = s; i <= 360 + s; i += 10) {
+  for (let i = s; i <= 360 + s; i += 7) {
     angle = radians(i);
     x = center.x + radius * cos(angle);
     y = center.y + radius * sin(angle);
