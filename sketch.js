@@ -1,17 +1,23 @@
 let circles = [];
 
+// Define size for easy modification
+let circleSize = 200;
+
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(800, 800);
   noLoop();
 
   // Each circle object now has a 'pattern' property to determine which function should be used
-  circles.push({ cx: 100, cy: 100, size: 200, pattern: "smallCircles" });
-  circles.push({ cx: 220, cy: 250, size: 200, pattern: "defaultPattern" });
-  circles.push({ cx: 120, cy: 300, size: 200, pattern: "smallCircles" });
+  circles.push({ cx: 100, cy: 100, size: circleSize, pattern: "smallCircles" });
+  circles.push({ cx: 300, cy: 100, size: circleSize, pattern: "defaultPattern" });
+  circles.push({ cx: 300, cy: 300, size: circleSize, pattern: "smallCircles" });
+  circles.push({ cx: 500, cy: 300, size: circleSize, pattern: "defaultPattern" });
+  circles.push({ cx: 500, cy: 500, size: circleSize, pattern: "smallCircles" });
+  circles.push({ cx: 100, cy: 500, size: circleSize, pattern: "defaultPattern" });
 }
 
 function draw() {
-  background(100);
+  background(1, 76, 118);
 
   for (let circle of circles) {
     if (circle.pattern === "smallCircles") {
