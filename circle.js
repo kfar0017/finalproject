@@ -95,3 +95,67 @@ function drawRadialZigzag(cx, cy, radius, segments, zigzagLength, direction) {
   }
   pop();
 }
+
+
+
+// Another circle
+function setup() {
+  createCanvas(400, 400);
+
+  background(100);
+
+  noStroke();
+  let cx = width / 2;
+  let cy = height / 2;
+  fill(255);
+  ellipse(cx, cy, 300, 300);
+
+  fill(206, 64, 87);
+  for (let j = 0; j < 5; j++) {
+    let ps = circlePoints({ x: cx, y: cy }, 300 - (j + 1) * 30);
+    for (let i = 0; i < ps.length; i++) {
+      ellipse(ps[i].x, ps[i].y, 10, 10);
+    }
+  }
+
+  fill(213, 94, 173);
+  stroke(217, 56, 79);
+  strokeWeight(5);
+  ellipse(cx, cy, 135, 135);
+
+  strokeWeight(2);
+  stroke(227, 102, 82);
+  let ps = circlePoints({ x: cx, y: cy }, 120);
+  for (let i = 0; i < ps.length; i++) {
+    line(ps[i].x, ps[i].y, cx, cy);
+  }
+
+  stroke(216, 77, 135);
+  ellipse(cx, cy, 70, 70);
+  noStroke();
+  fill(119, 114, 99);
+  ellipse(cx, cy, 65, 65);
+  fill(218, 55, 61);
+  ellipse(cx, cy, 50, 50);
+  fill(0);
+  ellipse(cx, cy, 40, 40);
+  fill(89, 156, 83);
+  ellipse(cx, cy, 30, 30);
+  fill(255);
+  ellipse(cx, cy, 15, 15);
+}
+
+function circlePoints(center, diameter) {
+  let points = [];
+  let radius = diameter / 2;
+  let x, y, angle;
+  let s = random(0, 45);
+  for (let i = s; i <= 360 + s; i += 10) {
+    angle = radians(i);
+    x = radius * cos(angle) + center.x;
+    y = radius * sin(angle) + center.y;
+    points.push({ x, y });
+  }
+
+  return points;
+}
