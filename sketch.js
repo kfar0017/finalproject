@@ -2,7 +2,7 @@ let circles = [];
 let hexagonRadius = 145;
 
 // Define size for easy modification
-let circleSize = 220;
+let circleSize = 225;
 
 function setup() {
   createCanvas(800, 800);
@@ -11,10 +11,14 @@ function setup() {
   // Each circle object now has a 'pattern' property to determine which function should be used
   circles.push({ cx: 130, cy: 130, size: circleSize, pattern: "smallCircles" });
   circles.push({ cx: 400, cy: 130, size: circleSize, pattern: "defaultPattern" });
+  circles.push({ cx: 670, cy: 130, size: circleSize, pattern: "ZigCircle"});
+  circles.push({ cx: 130, cy: 400, size: circleSize, pattern: "ZigCircle"});
   circles.push({ cx: 400, cy: 400, size: circleSize, pattern: "smallCircles" });
   circles.push({ cx: 670, cy: 400, size: circleSize, pattern: "defaultPattern" });
   circles.push({ cx: 670, cy: 660, size: circleSize, pattern: "smallCircles" });
+  circles.push({ cx: 400, cy: 660, size: circleSize, pattern: "ZigCircle"});
   circles.push({ cx: 130, cy: 660, size: circleSize, pattern: "defaultPattern" });
+  
 }
 
 function draw() {
@@ -31,16 +35,22 @@ function draw() {
 
       // Draw hexagon pattern
       drawHexagonPattern(cx, cy);
-
     }
   }
 
-
   for (let circle of circles) {
-    if (circle.pattern === "smallCircles") {
-      drawSmallCircles(circle.cx, circle.cy, circle.size);
-    } else {
-      drawCirclePattern(circle.cx, circle.cy, circle.size);
+    // Apply the correct pattern based on the 'pattern' property
+    switch (circle.pattern) {
+      case "smallCircles":
+        drawSmallCircles(circle.cx, circle.cy, circle.size);
+        break;
+      case "defaultPattern":
+        drawCirclePattern(circle.cx, circle.cy, circle.size);
+        break;
+      case "ZigCircle":
+        drawZigCircle(circle.cx, circle.cy, circle.size);
+        break;
+      // Add more cases here for additional patterns
     }
   }
 }
@@ -57,6 +67,8 @@ function drawHexagonPattern(cx, cy) {
     let x = cx + cos(angle) * hexagonRadius;
     let y = cy + sin(angle) * hexagonRadius;
     noFill()
+    stroke(205, 91, 28)
+    strokeWeight(4)
     vertex(x, y);
   }
   endShape(CLOSE);
@@ -175,4 +187,78 @@ function circlePoints(center, diameter) {
     points.push({ x, y });
   }
   return points;
+}
+
+function drawZigCircle(cx, cy, size) {
+  // Yellow circle in the background
+  fill(255, 211, 52); // Set the fill color to yellow
+  stroke(255, 255, 255); // No border for the circle
+  ellipse(cx, cy, size);
+
+  // Radiating zigzag lines on top of the yellow circle
+  drawRadialZigzag(cx, cy, 10, 30, 73, -1); // Inner zigzag
+  drawRadialZigzag(cx, cy, 10, 30, 73, 1); // Outer zigzag
+  
+  // Pink circle with pattern inside
+  fill(234, 84, 184); // Set the fill color to pink
+  ellipse(cx, cy, size * 0.595);
+
+  // Draw small red circles
+  drawRedCircles(cx, cy, size * 0.3, 50);
+  
+  // Green outer circle
+  fill(130, 154, 138);
+  ellipse(cx, cy, size * 0.25);
+  
+  // Black outer circle
+  fill(0);
+  ellipse(cx, cy, size * 0.17);
+  
+  // Red middle circle
+  fill(255, 0, 0);
+  ellipse(cx, cy, size * 0.095);
+  
+  // White center circle
+  fill(255);
+  ellipse(cx, cy, size * 0.05);
+}
+
+function drawRadialZigzag(cx, cy, radius, segments, zigzagLength, direction) {
+  push();
+  stroke(255, 0, 0); // Red color for zigzag
+  strokeWeight(3);
+  let angleIncrement = TWO_PI / segments;
+
+  for (let angle = 0; angle < TWO_PI; angle += angleIncrement) {
+    let xStart = cx + radius * cos(angle);
+    let yStart = cy + radius * sin(angle);
+    let xEnd = cx + (radius + zigzagLength) * cos(angle);
+    let yEnd = cy + (radius + zigzagLength) * sin(angle);
+    if (int(angle / angleIncrement) % 2 == 0) {
+      xEnd += direction * zigzagLength * cos(angle + HALF_PI);
+      yEnd += direction * zigzagLength * sin(angle + HALF_PI);
+    } else {
+      xEnd -= direction * zigzagLength * cos(angle + HALF_PI);
+      yEnd -= direction * zigzagLength * sin(angle + HALF_PI);
+    }
+    line(xStart, yStart, xEnd, yEnd);
+  }
+  pop();
+}
+
+
+function drawRedCircles(centerX, centerY, bigCircleRadius, numSmallCircles) {
+  let angleIncrement = 360 / numSmallCircles;
+  for (let r = 0; r < bigCircleRadius; r += 7) {
+    for (let i = 0; i < numSmallCircles; i++) {
+      let angle = radians(i * angleIncrement);
+      let x = centerX + cos(angle) * r;
+      let y = centerY + sin(angle) * r;
+      push();
+      fill(247, 10, 4); // Red fill for small dots
+      noStroke(); // No border for the small dots
+      ellipse(x, y, 6);
+      pop();
+    }
+  }
 }
